@@ -165,7 +165,18 @@ int main() {
 		cout << "===============================" << endl;
 		cout << "Masukkan pilihan aplikasi:";
 		cin >> pilihan;
-		cout << "init";
+		switch (pilihan) {
+                case 0: // keluar dari aplikasi
+                    keluar = 0;
+                    break;
+                case 1: // membaca data mahasiswa
+                    cout << "Berikut adalah data peserta kelas:" << endl;
+                    cout << "No.\tNRP\tNama\tTugas1\tTugas2\tTugas3" << endl;
+                    mahasiswa.read();
+                    cout << "Tekan Enter untuk melanjutkan...";
+                    cin.ignore();
+                    cin.get();
+                    break;
 		return 0;
 
 		} while (keluar == 1);
