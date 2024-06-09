@@ -177,6 +177,26 @@ int main() {
                     cin.ignore();
                     cin.get();
                     break;
+				case 2: // Menambah data mahasiswa
+                    cout << "Masukkan jumlah mahasiswa:";
+                    cin >> jmlhMahasiswa;
+                    for (int i = 0; i < jmlhMahasiswa; i++) {
+                        Mahasiswa::Data mhs;
+                        cout << "Data Mahasiswa ke-" << i + 1 << ": " << endl;
+                        cout << "NRP: ";
+                        cin >> mhs.NRP;
+                        cout << "Nama: ";
+                        cin.ignore();
+                        getline(cin, mhs.nama);
+                        cout << "Tugas 1: ";
+                        cin >> mhs.tugas[0];
+                        cout << "Tugas 2: ";
+                        cin >> mhs.tugas[1];
+                        cout << "Tugas 3: ";
+                        cin >> mhs.tugas[2];
+                        mahasiswa.write(mhs);
+                        }
+                    break;
 		return 0;
 
 		} while (keluar == 1);
