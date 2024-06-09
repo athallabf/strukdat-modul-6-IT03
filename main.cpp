@@ -1,10 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <sstream>
 using namespace std;
 
-//Declare class Mahasiswa
+// Declare class Mahasiswa
 class Mahasiswa {
 public:
 	struct Data {
@@ -13,7 +12,8 @@ public:
 		int tugas[3];
 		};
 
-	// WRITE
+	// Operasi CRUD dari class Mahasiswa
+	// CREATE / Write
 	void write(Data mhs) {
 		ofstream file("data_mahasiswa.txt", ios::app);
 		if (!file.is_open()) {
@@ -30,8 +30,15 @@ public:
 			}
 		}
 
+	// READ
+	void read() {
+		cout << "Berikut adalah data peserta kelas:" << endl;
+		cout << "No.\tNRP\t\tNama\tTugas1\tTugas2\tTugas3" << endl;
+		system("cat -n data_mahasiswa.txt | awk '{print $1 \"\\t\" $2 \"\\t\" $3  \"\\t\" $4 \"\\t\" $5 \"\\t\" $6 \"\\t\" $7}'");
+		}
+
 	// UPDATE
-	void update(long long NRP, int newTugas[]) {
+	void update(long long int NRP, int newTugas[]) {
 		ifstream file("data_mahasiswa.txt");
 		ofstream file_t("datatemp.txt");
 
@@ -68,54 +75,16 @@ public:
 		rename("datatemp.txt", "data_mahasiswa.txt");
 		}
 
-	// READ
-	void read() {
-		ifstream file("data_mahasiswa.txt");
-		if (file.is_open()) {
-			string line;
-			int i = 1;
-			while (getline(file, line)) {
-				istringstream iss(line);
-				Data mhs;
-				if (!(iss >> mhs.NRP)) {
-					cerr << "Kesalahan parsing NRP untuk mahasiswa nomor " << i << endl;
-					continue;
-					}
-				iss >> ws;
-				getline(iss, mhs.nama, ' ');
-				for (int j = 0; j < 3; j++) {
-					if (!(iss >> mhs.tugas[j])) {
-						cerr << "Kesalahan parsing tugas " << j + 1 << " untuk mahasiswa nomor " << i << endl;
-						continue;
-						}
-					}
-				cout << i << "\t" << mhs.NRP << "\t" << mhs.nama << "\t\t" << mhs.tugas[0] << "\t" << mhs.tugas[1] << "\t" << mhs.tugas[2] << endl;
-				i++;
-				}
-			if (i == 1) {
-				cout << "Data masih kosong!" << endl;
-				}
-			file.close();
-			}
-		else {
-			cerr << "File tidak dapat diakses!" << endl;
-			}
-		}
 
 	// DELETE
-	void del(long long NRP) {
+	void del(long long int NRP) {
 		ifstream file("data_mahasiswa.txt");
 		ofstream file_t("datatemp.txt");
 
 		Data temp;
 		bool found = false;
 
-		while (file >> temp.NRP) {
-			file >> ws;
-			getline(file, temp.nama, ' ');
-			for (int i = 0; i < 3; i++) {
-				file >> temp.tugas[i];
-				}
+		while (file >> temp.NRP >> temp.nama >> temp.tugas[0] >> temp.tugas[1] >> temp.tugas[2]) {
 			if (temp.NRP == NRP) {
 				found = true;
 				}
@@ -142,9 +111,10 @@ public:
 
 
 int main() {
+	// Declare penggunaan class dan lainnya
 	Mahasiswa mahasiswa;
 	int jmlhMahasiswa, pilihan;
-	long long NRPterpilih;
+	long long int NRPterpilih;
 	int keluar = 1;
 
 	// Tampilan menu
@@ -165,39 +135,73 @@ int main() {
 		cout << "===============================" << endl;
 		cout << "Masukkan pilihan aplikasi:";
 		cin >> pilihan;
-		switch (pilihan) {
-                case 0: // keluar dari aplikasi
-                    keluar = 0;
-                    break;
-                case 1: // membaca data mahasiswa
-                    cout << "Berikut adalah data peserta kelas:" << endl;
-                    cout << "No.\tNRP\tNama\tTugas1\tTugas2\tTugas3" << endl;
-                    mahasiswa.read();
-                    cout << "Tekan Enter untuk melanjutkan...";
-                    cin.ignore();
-                    cin.get();
-                    break;
-				case 2: // Menambah data mahasiswa
-                    cout << "Masukkan jumlah mahasiswa:";
-                    cin >> jmlhMahasiswa;
-                    for (int i = 0; i < jmlhMahasiswa; i++) {
-                        Mahasiswa::Data mhs;
-                        cout << "Data Mahasiswa ke-" << i + 1 << ": " << endl;
-                        cout << "NRP: ";
-                        cin >> mhs.NRP;
-                        cout << "Nama: ";
-                        cin.ignore();
-                        getline(cin, mhs.nama);
-                        cout << "Tugas 1: ";
-                        cin >> mhs.tugas[0];
-                        cout << "Tugas 2: ";
-                        cin >> mhs.tugas[1];
-                        cout << "Tugas 3: ";
-                        cin >> mhs.tugas[2];
-                        mahasiswa.write(mhs);
-                        }
-                    break;
-		return 0;
 
+		switch (pilihan) {
+				case 0: // keluar dari aplikasi
+					keluar = 0;
+					break;
+				case 1: // membaca data mahasiswa
+					mahasiswa.read();
+					system("read -n 1 -s -p 'Tekan Key Bebas untuk melanjutkan...'; echo");
+					break;
+				case 2: // menambah data mahasiswa
+					cout << "Masukkan jumlah mahasiswa:";
+					cin >> jmlhMahasiswa;
+					for (int i = 0; i < jmlhMahasiswa; i++) {
+						Mahasiswa::Data mhs;
+						cout << "Data Mahasiswa ke-" << i + 1 << ": " << endl;
+						cout << "NRP: ";
+						cin >> mhs.NRP;
+						cout << "Nama: ";
+						cin.ignore();
+						getline(cin, mhs.nama);
+						cout << "Tugas 1: ";
+						cin >> mhs.tugas[0];
+						cout << "Tugas 2: ";
+						cin >> mhs.tugas[1];
+						cout << "Tugas 3: ";
+						cin >> mhs.tugas[2];
+						mahasiswa.write(mhs);
+						}
+					break;
+				case 3: // update data mahasiswa
+					cout << "==========================================" << endl;
+					mahasiswa.read();
+					cout << "==========================================" << endl;
+					cout << "Masukkan NRP dari mahasiswa yang dipilih:";
+					cin >> NRPterpilih;
+					int newTugas[3];
+					for (int i = 0; i < 3; i++) {
+						cout << "Masukkan Update Nilai Tugas-" << i + 1 << ":";
+						cin >> newTugas[i];
+						}
+					mahasiswa.update(NRPterpilih, newTugas);
+					cout << "Data berhasil diupdate!" << endl;
+					cout << "Tekan Enter untuk melanjutkan...";
+					cin.ignore();
+					cin.get();
+					break;
+				case 4: // hapus data mahasiswa terpilih
+					cout << "==========================================" << endl;
+					mahasiswa.read();
+					cout << "==========================================" << endl;
+					cout << "Masukkan NRP dari mahasiswa yang dipilih:";
+					cin >> NRPterpilih;
+					mahasiswa.del(NRPterpilih);
+					cout << "Data berhasil dihapus!" << endl;
+					cout << "Tekan Enter untuk melanjutkan...";
+					cin.ignore();
+					cin.get();
+					break;
+				default:
+					cout << "Pilihan tidak tersedia!" << endl;
+					cout << "Tekan Enter untuk melanjutkan...";
+					cin.ignore();
+					cin.get();
+					break;
+			}
 		} while (keluar == 1);
+
+	return 0;
 	}
+
