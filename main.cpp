@@ -28,7 +28,46 @@ public:
 			cout << "Data berhasil dimasukkan!" << endl;
 			}
 		}
+
+		// UPDATE
+    void update(long long NRP, int newTugas[]) {
+        ifstream file("data_mahasiswa.txt");
+        ofstream file_t("datatemp.txt");
+
+        Data temp;
+        bool found = false;
+
+        while (file >> temp.NRP) {
+            file >> ws;
+            getline(file, temp.nama, ' ');
+            for (int i = 0; i < 3; i++) {
+                file >> temp.tugas[i];
+                }
+            if (temp.NRP == NRP) {
+                for (int i = 0; i < 3; i++) {
+                    temp.tugas[i] = newTugas[i];
+                    }
+                found = true;
+                }
+            file_t << temp.NRP << " " << temp.nama << " ";
+            for (int i = 0; i < 3; i++) {
+                file_t << temp.tugas[i] << " ";
+                }
+            file_t << endl;
+            }
+
+        if (!found) {
+            cerr << "Data dari NRP: " << NRP << " tidak ditemukan!" << endl;
+            }
+
+        file.close();
+        file_t.close();
+
+        remove("data_mahasiswa.txt");
+        rename("datatemp.txt", "data_mahasiswa.txt");
+        }
 	};
+	
 
 int main() {
 	cout << "init";
